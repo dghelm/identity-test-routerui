@@ -1,0 +1,62 @@
+<html>
+  <head>
+    <title>Launcher</title>
+  </head>
+  <body>
+    <h1>This is an invisibile iFrame which will launch the router-ui.</h1>
+    <button onclick="launchRouter()">Launch router-ui</button>
+    <p>See console for results.</p>
+    <script>
+
+      let routerui = null;
+
+      function closeRouter(){
+        routerui.close();
+        console.log("router-ui closed");
+      }
+
+      function handleMessage(e){
+
+        if (e.data === 'close'){
+          return closeRouter();
+        }
+
+          console.log(e.data);
+          return closeRouter();
+
+
+      }
+
+      function launchRouter(){
+        console.log('router-ui launched');
+        routerui = window.popupCenter('./index.html', 'Router-UI', '120', '120');
+      window.addEventListener("message", handleMessage, false);
+      };
+
+      function popupCenter(url, title, w, h) {
+        // Fixes dual-screen position                             Most browsers      Firefox
+        const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX
+        const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY
+
+        const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width
+        const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height
+
+        const systemZoom = width / window.screen.availWidth
+        const left = (width - w) / 2 / systemZoom + dualScreenLeft
+        const top = (height - h) / 2 / systemZoom + dualScreenTop
+        const newWindow = window.open(url, title,
+          `
+          scrollbars=yes,
+          width=${w / systemZoom},
+          height=${h / systemZoom},
+          top=${top},
+          left=${left}
+          `
+        )
+
+        if (window.focus) newWindow.focus()
+        return newWindow
+      }
+    </script>
+  </body>
+</html>
